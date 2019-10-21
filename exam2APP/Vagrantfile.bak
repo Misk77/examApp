@@ -1,0 +1,34 @@
+#use libvirt
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.require_version ">= 1.5.0"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "generic/ubuntu1804"
+  #  ssh config
+  config.ssh.insert_key = false
+    #setting provider, the virtual enginee
+  config.vm.provider "libvirt" do |libvirt|
+    libvirt.driver = "kvm"
+    libvirt.memory = 2048
+    libvirt.cpus = 2
+ end
+
+  #  define vm , vm name
+config.vm.define "exam2APP" do |exam2APP|
+    exam2APP.vm.hostname = "exam2APP"
+   # nätverket ip setup with setip.sh script
+   exam2APP.vm.network "private_network", ip: "IPADRESS"
+	# run script for req
+   exam2APP.vm.provision :shell, path: "stuff/script.sh"
+  
+  # Provisioning för installations
+  exam2APP.vm.provision :ansible do |ansible|
+    ansible.compatibility_mode = "2.0"
+    ansible.playbook = "stuff/playbook.yml"
+    ansible.inventory_path = "stuff/inventory"
+    ansible.become = true 
+   end
+  end
+end

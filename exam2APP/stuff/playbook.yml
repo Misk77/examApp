@@ -1,0 +1,43 @@
+---
+- hosts: web
+  become: yes
+  roles:
+  - exam2APP
+  - geerlingguy.mysql
+  - geerlingguy.apache
+  - geerlingguy.php
+  - geerlingguy.php-versions
+  - geerlingguy.php-mysql
+
+### WEB STUFF kopierar index från stuff, så vi slipper se apache "IT WORKS" 
+
+### DB STUFF
+  tasks:
+    - name: Copy sql files to webserver
+      copy:
+        src: files/webapp.sql
+        dest: /tmp/webapp.sql
+        owner: vagrant
+        group: vagrant
+        mode: 0644
+    - name : create user
+      mysql_user:
+        name: vagrant
+        password: vagrant
+        priv: '*.*:ALL'
+        state: present
+    - name: Create database Tables
+      mysql_db:
+        name: exam2APP
+        login_user: '{{ exam2APP_db_user }}'
+        login_password: '{{ exam2APP_db_password }}'
+        state: import
+        target: /tmp/webapp.sql
+    - name: Copy exam2APP own index.php to webserver
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+        owner: vagrant
+        group: vagrant
+        mode: 0644
+

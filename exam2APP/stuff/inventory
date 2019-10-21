@@ -1,0 +1,10 @@
+[web]
+exam2APP
+ansible_ssh_host=192.168.100.100 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+192.168.100.100 ansible_user=vagrant ansible_ssh_pass=vagrant
+
+[db]
+exam2APP
+ansible_ssh_host=192.168.100.100 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+192.168.100.100 ansible_user=vagrant ansible_ssh_pass=vagrant
+
